@@ -23,6 +23,16 @@ class SpatialUnitSerializer(FieldSelectorSerializer,
         return SpatialUnit.objects.create(
             project_id=project.id, **validated_data)
 
+    def to_representation(self, obj):
+        ret = super().to_representation(obj)
+        if 'search' in self.context:
+            ret = ret['properties']
+            for attr in ret['attributes']:
+                ret[attr] = ret['attributes'][attr]
+            del ret['attributes']
+            del ret['id']
+        return ret
+
 
 class SpatialUnitGeoJsonSerializer(geo_serializers.GeoFeatureModelSerializer):
     url = serializers.SerializerMethodField()

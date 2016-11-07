@@ -1,14 +1,17 @@
 import pytest
 from django.test import TestCase
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.serializers import ValidationError
+from jsonattrs.models import Attribute, AttributeType, Schema
 
+from core.tests.utils.cases import UserTestCase
 from spatial import serializers
 from spatial.tests.factories import SpatialUnitFactory
 from spatial.models import SpatialUnit
 from organization.tests.factories import ProjectFactory
 
 
-class SpatialUnitSerializerTest(TestCase):
+class SpatialUnitSerializerTest(UserTestCase, TestCase):
     def test_geojson_serialization(self):
         spatial_data = SpatialUnitFactory.create()
         serializer = serializers.SpatialUnitSerializer(spatial_data)
@@ -97,6 +100,35 @@ class SpatialUnitSerializerTest(TestCase):
 
         su.refresh_from_db()
         assert su.project == project
+
+    def test_serialize_spatial_unit_search_mode(self):
+        project = ProjectFactory.create(current_questionnaire='a1')
+        content_type = ContentType.objects.get(
+            app_label='spatial', model='spatialunit')
+        schema = Schema.objects.create(
+            content_type=content_type,
+            selectors=(project.organization.id, project.id, 'a1'))
+        attr_type = AttributeType.objects.get(name='text')
+        Attribute.objects.create(
+            schema=schema,
+            name='fname',
+            long_name='Test field',
+            attr_type=attr_type,
+            index=0,
+            required=False,
+            omit=False
+        )
+        su = SpatialUnitFactory.create(
+            project=project, attributes={'fname': 'Test'})
+        serializer = serializers.SpatialUnitSerializer(
+            su, context={'search': True})
+        serialized = serializer.data
+
+        assert 'id' not in serialized
+        assert 'attributes' not in serialized
+        assert 'geometry' not in serialized
+        assert serialized['type'] == su.type
+        assert serialized['fname'] == su.attributes['fname']
 
 
 class SpatialUnitGeoJsonSerializerTest(TestCase):

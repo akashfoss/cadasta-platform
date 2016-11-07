@@ -19,6 +19,15 @@ class PartySerializer(FieldSelectorSerializer, serializers.ModelSerializer):
         return Party.objects.create(
             project=project, **validated_data)
 
+    def to_representation(self, obj):
+        ret = super().to_representation(obj)
+        if 'search' in self.context:
+            for attr in ret['attributes']:
+                ret[attr] = ret['attributes'][attr]
+            del ret['attributes']
+            del ret['id']
+        return ret
+
 
 class PartyRelationshipReadSerializer(serializers.ModelSerializer):
 
@@ -109,3 +118,12 @@ class TenureRelationshipWriteSerializer(serializers.ModelSerializer):
         project = self.context['project']
         return TenureRelationship.objects.create(
             project=project, **validated_data)
+
+    def to_representation(self, obj):
+        ret = super().to_representation(obj)
+        if 'search' in self.context:
+            for attr in ret['attributes']:
+                ret[attr] = ret['attributes'][attr]
+            del ret['attributes']
+            del ret['id']
+        return ret

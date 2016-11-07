@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'buckets',
     'party',
     'xforms',
+    'search',
 
     'crispy_forms',
     'parsley',

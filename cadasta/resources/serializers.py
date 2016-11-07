@@ -46,6 +46,14 @@ class ResourceSerializer(serializers.ModelSerializer):
                 **validated_data
             )
 
+    def to_representation(self, obj):
+        ret = super().to_representation(obj)
+        if 'search' in self.context:
+            del ret['id']
+            del ret['file']
+            del ret['archived']
+        return ret
+
 
 class SpatialResourceSerializer(serializers.ModelSerializer):
     name = serializers.CharField()

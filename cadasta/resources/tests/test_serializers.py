@@ -48,7 +48,7 @@ class ResourceSerializerTest(UserTestCase, FileStorageTestCase, TestCase):
         assert project.resources.first().name == data['name']
         assert project.resources.first().contributor == user
 
-    def test_assign_exisiting_resource(self):
+    def test_assign_existing_resource(self):
         project = ProjectFactory.create()
         resource = ResourceFactory.create()
         data = {'id': resource.id}
@@ -61,7 +61,7 @@ class ResourceSerializerTest(UserTestCase, FileStorageTestCase, TestCase):
 
         assert project.resources.count() == 1
 
-    def test_assign_exisiting_resource_that_does_not_exist(self):
+    def test_assign_existing_resource_that_does_not_exist(self):
         project = ProjectFactory.create()
         data = {'id': 'askldh89yashd89ahsd'}
         serializer = ResourceSerializer(
@@ -73,3 +73,15 @@ class ResourceSerializerTest(UserTestCase, FileStorageTestCase, TestCase):
         assert serializer.is_valid() is False
         assert serializer.errors['id'] == 'Resource not found'
         assert project.resources.count() == 0
+
+    def test_serialize_resource_search_mode(self):
+        resource = ResourceFactory.create()
+        serializer = ResourceSerializer(resource, context={'search': True})
+        serialized = serializer.data
+
+        assert 'id' not in serialized
+        assert 'file' not in serialized
+        assert 'archived' not in serialized
+        assert serialized['name'] == resource.name
+        assert serialized['description'] == resource.description
+        assert serialized['original_file'] == resource.original_file
