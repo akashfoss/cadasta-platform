@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'buckets',
     'party',
     'xforms',
+    'search',
 
     'crispy_forms',
     'parsley',
@@ -491,3 +492,5 @@ IMPORTERS = {
     'csv': 'organization.importers.csv.CSVImporter',
     'xls': 'organization.importers.xls.XLSImporter'
 }
+ES_HOST = '192.168.1.11'
+ES_PORT = '9200'
