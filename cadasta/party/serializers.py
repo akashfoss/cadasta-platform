@@ -19,6 +19,9 @@ class PartySerializer(FieldSelectorSerializer, serializers.ModelSerializer):
         return Party.objects.create(
             project=project, **validated_data)
 
+    def foo(self):
+        print('bar')
+
 
 class PartyRelationshipReadSerializer(serializers.ModelSerializer):
 

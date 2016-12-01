@@ -398,6 +398,7 @@ def load_tenure_relationship_types(force=False):
 @receiver(models.signals.pre_delete)
 def detach_party_resources(sender, instance, **kwargs):
     sender = sender.__base__ if sender._deferred else sender
+    PartySerializer().foo()
     if (sender == Party or
        sender == TenureRelationship or
        sender == SpatialUnit):
