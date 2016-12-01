@@ -1,10 +1,13 @@
 """Party models."""
 
 from core.models import RandomIDModel
+from core.mixins import update_search_index
+# from core import signals
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.dispatch import receiver
 from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy
 
@@ -136,8 +139,7 @@ class Party(ResourceModelMixin, RandomIDModel):
             },
         )
 
-
-models.signals.pre_delete.connect(detach_object_resources, sender=Party)
+models.signals.post_save.connect(update_search_index, sender=Party)
 
 
 @fix_model_for_attributes
@@ -331,8 +333,19 @@ class TenureRelationship(ResourceModelMixin, RandomIDModel):
         )
 
 
-models.signals.pre_delete.connect(
-    detach_object_resources, sender=TenureRelationship)
+# @receiver(models.signals.pre_delete)
+# def detach_party_resources(sender, instance, **kwargs):
+#     if sender._deferred and sender.__base__ == TenureRelationship:
+#         detach_object_resources(sender, instance)
+
+
+# @receiver(models.signals.pre_delete)
+# def delete_party_search_index(sender, instance, **kwargs):
+#     if sender._deferred and sender.__base__ == TenureRelationship:
+#         update_search_index(sender, instance)
+
+models.signals.post_save.connect(
+    update_search_index, sender=TenureRelationship)
 
 
 class TenureRelationshipType(models.Model):
@@ -380,3 +393,23 @@ def load_tenure_relationship_types(force=False):
             TenureRelationshipType.objects.create(
                 id=tr_type[0], label=tr_type[1]
             )
+
+
+@receiver(models.signals.pre_delete)
+def detach_party_resources(sender, instance, **kwargs):
+    sender = sender.__base__ if sender._deferred else sender
+    if (sender == Party or
+       sender == TenureRelationship or
+       sender == SpatialUnit):
+        detach_object_resources(sender, instance)
+
+
+@receiver(models.signals.pre_delete)
+def delete_party_search_index(sender, instance, **kwargs):
+    sender = sender.__base__ if sender._deferred else sender
+    if (sender == Party or
+       sender == TenureRelationship or
+       sender == SpatialUnit):
+        update_search_index(sender, instance)
+
+models.signals.post_save.connect(update_search_index, sender=Party)

@@ -1,3 +1,4 @@
+import boto3
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
@@ -59,3 +60,18 @@ def update_permissions(permission, obj=None):
             return False
         return permission
     return set_permissions
+
+
+sqs = boto3.resource('sqs')
+queue = sqs.get_queue_by_name(QueueName='platform-staging-es-sqs.fifo')
+
+
+def update_search_index(sender, instance, **kwargs):
+    # What actually needs to go in the MessageBody?
+    # What should the groupID be?
+    project = (instance.project.name if hasattr(instance, 'project')
+               else instance.project_id)
+    queue.send_message(
+        MessageGroupId='searchIndexUpdate',
+        MessageBody='{} needs to be updated.'.format(project),
+    )

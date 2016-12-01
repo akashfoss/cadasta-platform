@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 
+# from party.models import Party
+
 
 class ResourceModelMixin:
     @property
