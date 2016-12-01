@@ -4,7 +4,11 @@ from ... import reindex
 
 
 class Command(BaseCommand):
-    help = "Repopulate the search indexes."
+    help = "Repopulate the search index of a project."
+
+    def add_arguments(self, parser):
+        parser.add_argument('project', type=str)
 
     def handle(self, *args, **options):
-        reindex.run()
+        project_slug = options['project']
+        reindex.run(project_slug)
