@@ -3,7 +3,6 @@ import requests
 from django.conf import settings
 from rest_framework.renderers import JSONRenderer
 
-from organization.models import Project
 from spatial.models import SpatialUnit
 from spatial.serializers import SpatialUnitSerializer
 from party.models import Party, TenureRelationship
@@ -52,6 +51,7 @@ def run(project_slug, verbose=True):
                         serializer(record, context={'search': True}).data
                     ).decode() + '\n'
                 print(bulk)
-                r = requests.post(index_url + '/' + es_type + '/_bulk', data=bulk)
+                r = requests.post(
+                    index_url + '/' + es_type + '/_bulk', data=bulk)
 
     # TODO: Resume batch processing by calling SQS
