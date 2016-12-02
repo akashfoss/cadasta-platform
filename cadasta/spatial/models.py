@@ -148,8 +148,6 @@ def check_extent(sender, instance, **kwargs):
     if instance.geometry:
         reassign_spatial_geometry(instance)
 
-models.signals.post_save.connect(update_search_index, sender=SpatialUnit)
-
 
 @fix_model_for_attributes
 @permissioned_model

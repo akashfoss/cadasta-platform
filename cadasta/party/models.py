@@ -394,23 +394,4 @@ def load_tenure_relationship_types(force=False):
                 id=tr_type[0], label=tr_type[1]
             )
 
-
-@receiver(models.signals.pre_delete)
-def detach_party_resources(sender, instance, **kwargs):
-    sender = sender.__base__ if sender._deferred else sender
-    PartySerializer().foo()
-    if (sender == Party or
-       sender == TenureRelationship or
-       sender == SpatialUnit):
-        detach_object_resources(sender, instance)
-
-
-@receiver(models.signals.pre_delete)
-def delete_party_search_index(sender, instance, **kwargs):
-    sender = sender.__base__ if sender._deferred else sender
-    if (sender == Party or
-       sender == TenureRelationship or
-       sender == SpatialUnit):
-        update_search_index(sender, instance)
-
 models.signals.post_save.connect(update_search_index, sender=Party)
