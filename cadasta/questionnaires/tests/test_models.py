@@ -5,7 +5,7 @@ from . import factories
 
 class QuestionnaireTest(TestCase):
     def test_repr(self):
-        project = ProjectFactory.build(slug='prj')
+        project = ProjectFactory.create(slug='prj')
         questionnaire = factories.QuestionnaireFactory.build(id='abc123',
                                                              project=project,
                                                              title='Questions')
@@ -15,7 +15,7 @@ class QuestionnaireTest(TestCase):
 
 class QuestionGroupTest(TestCase):
     def test_repr(self):
-        questionnaire = factories.QuestionnaireFactory.build(id='abc123')
+        questionnaire = factories.QuestionnaireFactory.create(id='abc123')
         group = factories.QuestionGroupFactory.build(
             id='abc123', name='Group', questionnaire=questionnaire)
         assert repr(group) == ('<QuestionGroup id=abc123 name=Group '
@@ -24,8 +24,8 @@ class QuestionGroupTest(TestCase):
 
 class QuestionTest(TestCase):
     def test_repr(self):
-        group = factories.QuestionGroupFactory.build(id='abc123')
-        questionnaire = factories.QuestionnaireFactory.build(id='abc123')
+        group = factories.QuestionGroupFactory.create(id='abc123')
+        questionnaire = factories.QuestionnaireFactory.create(id='abc123')
         question = factories.QuestionFactory.build(id='abc123',
                                                    name='Question',
                                                    question_group=group,
@@ -47,7 +47,7 @@ class QuestionTest(TestCase):
 
 class QuestionOptionTest(TestCase):
     def test_repr(self):
-        question = factories.QuestionFactory.build(id='abc123')
+        question = factories.QuestionFactory.create(id='abc123')
         option = factories.QuestionOptionFactory(id='abc123', name='Option',
                                                  question=question)
         assert repr(option) == ('<QuestionOption id=abc123 name=Option '
