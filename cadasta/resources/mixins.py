@@ -32,12 +32,12 @@ class ResourceModelMixin:
 def detach_object_resources(sender, instance, **kwargs):
     list_of_models = ('Party', 'TenureRelationship', 'SpatialUnit')
     sender = sender.__base__ if sender._deferred else sender
-    project = (instance.project.name if hasattr(instance, 'project')
-               else instance.project_id)
+    # project = (instance.project.name if hasattr(instance, 'project')
+    #            else instance.project_id)
     if sender.__name__ in list_of_models:
         print('detaching resources')
         for resource in instance.resources:
             content_object = resource.content_objects.get(
                 object_id=instance.id,
-                resource__project__slug=project.slug)
+                resource__project__slug=instance.project.slug)
             content_object.delete()

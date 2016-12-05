@@ -1,7 +1,7 @@
 """Party models."""
 
 from core.models import RandomIDModel
-from core.mixins import update_search_index
+# from core.mixins import update_search_index
 # from core import signals
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -139,7 +139,7 @@ class Party(ResourceModelMixin, RandomIDModel):
             },
         )
 
-models.signals.post_save.connect(update_search_index, sender=Party)
+# models.signals.post_save.connect(update_search_index, sender=Party)
 
 
 @fix_model_for_attributes
@@ -344,8 +344,8 @@ class TenureRelationship(ResourceModelMixin, RandomIDModel):
 #     if sender._deferred and sender.__base__ == TenureRelationship:
 #         update_search_index(sender, instance)
 
-models.signals.post_save.connect(
-    update_search_index, sender=TenureRelationship)
+# models.signals.post_save.connect(
+#     update_search_index, sender=TenureRelationship)
 
 
 class TenureRelationshipType(models.Model):
@@ -394,4 +394,4 @@ def load_tenure_relationship_types(force=False):
                 id=tr_type[0], label=tr_type[1]
             )
 
-models.signals.post_save.connect(update_search_index, sender=Party)
+# models.signals.post_save.connect(update_search_index, sender=Party)
