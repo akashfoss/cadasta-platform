@@ -3,8 +3,6 @@ from django.apps import apps
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
 
-# from party.models import Party
-
 
 class ResourceModelMixin:
     @property
@@ -32,10 +30,8 @@ class ResourceModelMixin:
 def detach_object_resources(sender, instance, **kwargs):
     list_of_models = ('Party', 'TenureRelationship', 'SpatialUnit')
     sender = sender.__base__ if sender._deferred else sender
-    # project = (instance.project.name if hasattr(instance, 'project')
-    #            else instance.project_id)
+
     if sender.__name__ in list_of_models:
-        print('detaching resources')
         for resource in instance.resources:
             content_object = resource.content_objects.get(
                 object_id=instance.id,
