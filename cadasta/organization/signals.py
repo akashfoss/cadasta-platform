@@ -1,4 +1,5 @@
 import boto3
+import json
 from django.dispatch import receiver
 from django.db import models
 
@@ -8,6 +9,7 @@ from spatial.serializers import SpatialUnitSerializer
 from resources.serializers import ResourceSerializer
 
 sqs = boto3.resource('sqs')
+# This needs to be updated once we have the queue variable in production.txt
 queue = sqs.get_queue_by_name(QueueName=return_queue_name())
 
 
@@ -29,11 +31,11 @@ def update_search_index(sender, instance, **kwargs):
         serializer = ResourceSerializer
 
     if serializer:
-        print('sending message to queue')
+        data = serializer(context={'search': True}).to_representation(instance)
+        json_data = json.dumps(data)
         queue.send_message(
             MessageGroupId='searchIndexUpdate',
-            MessageBody=str(serializer().to_representation(instance)),
+            MessageBody=json_data,
         )
-
 
 models.signals.post_save.connect(update_search_index)

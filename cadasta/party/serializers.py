@@ -20,6 +20,7 @@ class PartySerializer(FieldSelectorSerializer, serializers.ModelSerializer):
             project=project, **validated_data)
 
     def to_representation(self, obj):
+        print('context: ', self.context)
         ret = super().to_representation(obj)
         if 'search' in self.context:
             for attr in ret['attributes']:
