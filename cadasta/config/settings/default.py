@@ -497,3 +497,8 @@ IMPORTERS = {
     'csv': 'organization.importers.csv.CSVImporter',
     'xls': 'organization.importers.xls.XLSImporter'
 }
+
+ES_SCHEME = 'http'
+ES_HOST = 'localhost'
+ES_PORT = '9200'
+ES_REINDEX_PAGE_SIZE = 100

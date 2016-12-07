@@ -107,8 +107,3 @@ LOGGING = {
         }
     },
 }
-
-ES_SCHEME = 'http'
-ES_HOST = '192.168.1.11'
-ES_PORT = '9200'
-ES_REINDEX_PAGE_SIZE = 100
